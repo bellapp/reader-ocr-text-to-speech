@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# Application specific
+static/uploads/*
+static/audio/*
+static/text/*
+!static/uploads/.gitkeep
+!static/audio/.gitkeep
+!static/text/.gitkeep
+images/*
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# Environment variables
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# images
+images/
+images/*
+images.zip
+*.h5

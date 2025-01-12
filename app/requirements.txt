@@ -1,0 +1,9 @@
+flask
+tensorflow
+paddleocr
+paddlepaddle
+numpy
+openai
+Pillow
+werkzeug
+gunicorn

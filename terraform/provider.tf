@@ -11,8 +11,8 @@ terraform {
   }
   
   backend "s3" {
-    bucket = "your-terraform-state-bucket"
+    bucket = "ocr-reader-bucket"
     key    = "ocr-app/terraform.tfstate"
-    region = "us-west-2"
+    region = "us-east-1"
   }
 }

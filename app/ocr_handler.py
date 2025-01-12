@@ -94,6 +94,6 @@ class ImageProcessor:
 def process_images_and_generate_audio(image_paths, audio_folder, text_folder):
     processor = ImageProcessor(
         model_path="mobilenet_fine_tuned_last_10_layers.keras",
-        openai_api_key="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"
+        openai_api_key=os.getenv("OPENAI_API_KEY")
     )
     return processor.process_images_and_generate_audio(image_paths, audio_folder, text_folder)

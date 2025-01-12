@@ -18,7 +18,7 @@ resource "aws_ecr_repository" "app" {
   name = var.app_name
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
     ignore_changes = [name]
   }
 }

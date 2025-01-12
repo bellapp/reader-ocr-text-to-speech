@@ -16,6 +16,11 @@ module "vpc" {
 # ECR Repository
 resource "aws_ecr_repository" "app" {
   name = var.app_name
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [name]
+  }
 }
 
 # ECS Cluster

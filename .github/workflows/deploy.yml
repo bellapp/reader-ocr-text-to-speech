@@ -43,6 +43,10 @@ jobs:
     - name: Terraform Init
       working-directory: ./terraform
       run: terraform init
+    # Import the existing ECR repository
+    - name: Import ECR Repository
+      working-directory: ./terraform
+      run: terraform import aws_ecr_repository.app ocr-app || echo "Repository already imported"
 
     - name: Terraform Plan
       working-directory: ./terraform

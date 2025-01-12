@@ -88,3 +88,48 @@ resource "aws_ecs_service" "main" {
     container_port   = var.container_port
   }
 }
+resource "aws_security_group" "alb" {
+  name        = "${var.app_name}-alb-sg"
+  description = "Security group for ALB"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+resource "aws_security_group" "ecs_tasks" {
+  name        = "${var.app_name}-ecs-tasks-sg"
+  description = "Security group for ECS tasks"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = var.container_port
+    to_port     = var.container_port
+    protocol    = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+resource "aws_lb_target_group" "app" {
+  name     = "${var.app_name}-tg"
+  port     = var.container_port
+  protocol = "HTTP"
+  vpc_id   = module.vpc.vpc_id
+  target_type = "ip"
+}

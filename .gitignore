@@ -15,6 +15,7 @@ static/text/*
 images/*
 # Terraform
 .terraform/
+.terraform.*
 *.tfstate
 *.tfstate.*
 *.tfvars

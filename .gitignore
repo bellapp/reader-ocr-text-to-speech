@@ -19,6 +19,8 @@ images/*
 *.tfstate
 *.tfstate.*
 *.tfvars
+terraform/*
+terraform_old/*
 
 # Environment variables
 .env

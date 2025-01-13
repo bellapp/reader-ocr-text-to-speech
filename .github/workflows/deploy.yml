@@ -1,82 +1,82 @@
-name: Deploy to AWS
+# name: Deploy to AWS
 
-on:
-  push:
-    branches: [ main ]
+# on:
+#   push:
+#     branches: [ main ]
 
-env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: ocr-app
-  ECS_CLUSTER: ocr-app-cluster
-  ECS_SERVICE: ocr-app-service
+# env:
+#   AWS_REGION: us-east-1
+#   ECR_REPOSITORY: ocr-app
+#   ECS_CLUSTER: ocr-app-cluster
+#   ECS_SERVICE: ocr-app-service
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
+#     steps:
+#     - uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+#     - name: Login to Amazon ECR
+#       id: login-ecr
+#       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+#     - name: Build, tag, and push image to Amazon ECR
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         IMAGE_TAG: ${{ github.sha }}
+#       run: |
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+#     - name: Setup Terraform
+#       uses: hashicorp/setup-terraform@v1
 
-    - name: Terraform Init
-      working-directory: ./terraform
-      run: terraform init
-    # Import the existing ECR repository
-    # - name: Import ECR Repository
-    #   working-directory: ./terraform
-    #   run: terraform import aws_ecr_repository.app ocr-app || echo "Repository already imported"
-    - name: Check if ECR Repository Exists
-      id: check-ecr
-      run: |
-        if aws ecr describe-repositories --repository-names ocr-app --region us-east-1; then
-          echo "exists=true" >> $GITHUB_ENV
-        else
-          echo "exists=false" >> $GITHUB_ENV
-        fi
-      # Delete if exists
-    - name: Delete ECR Repository if exists
-      if: env.exists == 'true'
-      run: |
-        aws ecr delete-repository --repository-name ocr-app --region us-east-1 --force || echo "Repository does not exist"
-    # - name: Import ECR Repository
-    #   if: env.exists == 'false'
-    #   working-directory: ./terraform
-    #   run: terraform import aws_ecr_repository.app ocr-app
+#     - name: Terraform Init
+#       working-directory: ./terraform
+#       run: terraform init
+#     # Import the existing ECR repository
+#     # - name: Import ECR Repository
+#     #   working-directory: ./terraform
+#     #   run: terraform import aws_ecr_repository.app ocr-app || echo "Repository already imported"
+#     - name: Check if ECR Repository Exists
+#       id: check-ecr
+#       run: |
+#         if aws ecr describe-repositories --repository-names ocr-app --region us-east-1; then
+#           echo "exists=true" >> $GITHUB_ENV
+#         else
+#           echo "exists=false" >> $GITHUB_ENV
+#         fi
+#       # Delete if exists
+#     - name: Delete ECR Repository if exists
+#       if: env.exists == 'true'
+#       run: |
+#         aws ecr delete-repository --repository-name ocr-app --region us-east-1 --force || echo "Repository does not exist"
+#     # - name: Import ECR Repository
+#     #   if: env.exists == 'false'
+#     #   working-directory: ./terraform
+#     #   run: terraform import aws_ecr_repository.app ocr-app
 
-    - name: Terraform Plan
-      working-directory: ./terraform
-      env:
-        TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-      run: terraform plan
+#     - name: Terraform Plan
+#       working-directory: ./terraform
+#       env:
+#         TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+#       run: terraform plan
 
-    - name: Terraform Apply
-      working-directory: ./terraform
-      env:
-        TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-      run: terraform apply -auto-approve
+#     - name: Terraform Apply
+#       working-directory: ./terraform
+#       env:
+#         TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+#       run: terraform apply -auto-approve
 
-    - name: Update ECS service
-      run: |
-        aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
+#     - name: Update ECS service
+#       run: |
+#         aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment

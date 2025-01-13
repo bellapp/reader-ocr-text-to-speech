@@ -55,11 +55,15 @@ jobs:
         else
           echo "exists=false" >> $GITHUB_ENV
         fi
-    
-    - name: Import ECR Repository
-      if: env.exists == 'false'
-      working-directory: ./terraform
-      run: terraform import aws_ecr_repository.app ocr-app
+      # Delete if exists
+    - name: Delete ECR Repository if exists
+      if: env.exists == 'true'
+      run: |
+        aws ecr delete-repository --repository-name ocr-app --region us-east-1 --force || echo "Repository does not exist"
+    # - name: Import ECR Repository
+    #   if: env.exists == 'false'
+    #   working-directory: ./terraform
+    #   run: terraform import aws_ecr_repository.app ocr-app
 
     - name: Terraform Plan
       working-directory: ./terraform

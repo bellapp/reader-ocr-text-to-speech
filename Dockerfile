@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libxrender-dev \
     libgl1-mesa-glx \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file

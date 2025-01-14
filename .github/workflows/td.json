@@ -4,8 +4,9 @@
     {
       "name": "ocr_app",
       "image": "549327735600.dkr.ecr.us-east-2.amazonaws.com/ocr_app_repo",
-      "cpu": 256,
-      "memory": 512,
+      "cpu": 1024,
+      "memory": 2048,
+      
       "portMappings": [
         {
           "containerPort": 80,
@@ -31,6 +32,18 @@
         {
           "name": "OPENAI_API_KEY",
           "value": "#{OPENAI_API_KEY}#"
+        },
+        {
+          "name": "CUDA_VISIBLE_DEVICES",
+          "value": "-1"
+        },
+        {
+          "name": "TF_CPP_MIN_LOG_LEVEL",
+          "value": "2"
+        },
+        {
+          "name": "PYTHONUNBUFFERED",
+          "value": "1"
         }
       ],
       "mountPoints": [],
@@ -68,7 +81,7 @@
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "cpu": "256",
-  "memory": "512",
+  "cpu": "1024",
+  "memory": "2048",
   "registeredBy": "arn:aws:iam::549327735600:user/test-user"
 }

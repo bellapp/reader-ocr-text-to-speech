@@ -27,7 +27,12 @@
         "awslogs-stream-prefix": "ecs"
       }
     },
-      "environment": [],
+      "environment": [
+        {
+          "name": "OPENAI_API_KEY",
+          "value": "#{OPENAI_API_KEY}#"
+        }
+      ],
       "mountPoints": [],
       "volumesFrom": []
     }

@@ -1,7 +1,7 @@
 flask
 tensorflow
-paddleocr==2.6.0.1
-paddlepaddle==2.5.0
+paddleocr
+paddlepaddle
 numpy
 openai
 Pillow

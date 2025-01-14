@@ -2,6 +2,16 @@ import os
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from ocr_handler import process_images_and_generate_audio
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Get OpenAI API key from environment variable
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    logger.error("OpenAI API key not found in environment variables")
+    raise ValueError("OpenAI API key not found in environment variables")
 
 app = Flask(__name__)
 

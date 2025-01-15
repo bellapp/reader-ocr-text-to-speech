@@ -29,10 +29,7 @@
       }
     },
       "environment": [
-        {
-          "name": "OPENAI_API_KEY",
-          "value": "#{OPENAI_API_KEY}#"
-        },
+        
         {
           "name": "CUDA_VISIBLE_DEVICES",
           "value": "-1"
@@ -44,6 +41,12 @@
         {
           "name": "PYTHONUNBUFFERED",
           "value": "1"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "/ocr_app/OPENAI_API_KEY" 
         }
       ],
       "mountPoints": [],

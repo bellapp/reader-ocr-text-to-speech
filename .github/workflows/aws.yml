@@ -39,17 +39,17 @@ jobs:
           ECR_REGISTRY: "549327735600.dkr.ecr.us-east-1.amazonaws.com"
           ECR_REPOSITORY: "ocr_app_repo"
           IMAGE_TAG: latest
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          docker build \
-            --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         # run: |
-        #   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        #   docker build \
+        #     --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+        #     -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         #   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         #   echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def-1

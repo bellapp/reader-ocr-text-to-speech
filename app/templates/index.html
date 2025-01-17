@@ -1,148 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Image OCR and Audio Generator</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .drop-zone {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .audio-player {
-            margin: 10px 0;
-            width: 100%;
-        }
-        .text-content {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            background-color: #f8f9fa;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn your images into speech</title>
+    <!--<link rel="stylesheet" href="/templates/style.css">-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Image OCR and Audio Generator</h2>
-        
-        <div class="drop-zone" id="dropZone">
-            <p>Drag and drop images here or click to select files</p>
-            <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
-        </div>
+    <div class="container">
+        <nav class="navbar">
+            <img src="/static/images/logo.png" alt="AIPRO" class="logo">
+            <a href="#" class="https://github.com/bellapp/reader-ocr-text-to-speech">
+                <img src="/static/images/github-mark.svg" alt="GitHub" class="github-icon">
+                GitHub Repo
+            </a>
+        </nav>
 
-        <div id="uploadProgress" style="display: none;">
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                     role="progressbar" style="width: 100%">
-                    Processing...
-                </div>
-            </div>
-        </div>
+        <main>
+            <h1 class="title">
+                Turn your <span class="blue-text">Reading</span><br>
+                into <span class="blue-text">Listening</span>
+            </h1>
 
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <h4>Extracted Text</h4>
-                <div id="textContainer" class="text-content">
-                    <!-- Extracted text will be displayed here -->
+            <div id="dropZone" class="upload-zone">
+                <img src="/static/images/upload.png" alt="Upload" class="upload-icon">
+                <p>Drag & drop your images here or <span class="blue-text browse-link">browse</span></p>
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+            </div>
+
+            <div id="thumbnailsContainer" class="thumbnails"></div>
+
+            <button id="processBtn" class="process-btn" disabled>Process Images</button>
+
+            <div id="results" style="display: none;">
+                <div class="results-container">
+                    <div class="result-section">
+                        <h2>Extracted Text</h2>
+                        <div id="textContainer" class="text-container"></div>
+                    </div>
+                    <div class="result-section">
+                        <h2>Generated Audio</h2>
+                        <div id="audioContainer" class="audio-container"></div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <h4>Generated Audio</h4>
-                <div id="audioContainer">
-                    <!-- Audio players will be added here -->
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
-
-    <script>
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const uploadProgress = document.getElementById('uploadProgress');
-        const audioContainer = document.getElementById('audioContainer');
-        const textContainer = document.getElementById('textContainer');
-
-        // Handle drag and drop
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#000';
-        });
-
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#ccc';
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#ccc';
-            handleFiles(e.dataTransfer.files);
-        });
-
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-
-        function handleFiles(files) {
-            const formData = new FormData();
-            for (let file of files) {
-                formData.append('files[]', file);
-            }
-
-            uploadProgress.style.display = 'block';
-            audioContainer.innerHTML = '';
-            textContainer.innerHTML = 'Processing...';
-            
-            fetch('/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.audio_files) {
-                    audioContainer.innerHTML = '';
-                    data.audio_files.forEach(file => {
-                        const audioDiv = document.createElement('div');
-                        audioDiv.className = 'mb-3';
-                        
-                        const label = document.createElement('p');
-                        label.className = 'mb-1';
-                        label.textContent = `Audio Chunk ${file.split('_').pop().split('.')[0]}`;
-                        
-                        const audio = document.createElement('audio');
-                        audio.controls = true;
-                        audio.className = 'audio-player';
-                        audio.src = `/audio/${file}`;
-                        
-                        audioDiv.appendChild(label);
-                        audioDiv.appendChild(audio);
-                        audioContainer.appendChild(audioDiv);
-                    });
-                }
-
-                if (data.text_file) {
-                    fetch(`/text/${data.text_file}`)
-                        .then(response => response.text())
-                        .then(text => {
-                            textContainer.innerHTML = text.replace(/\n/g, '<br>');
-                        });
-                }
-
-                uploadProgress.style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                uploadProgress.style.display = 'none';
-                textContainer.innerHTML = 'Error processing files';
-            });
-        }
-    </script>
+    <!--<script src="/templates/app.js"></script>-->
 </body>
 </html>

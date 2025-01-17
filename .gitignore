@@ -34,7 +34,7 @@ terraform_old/*
 .DS_Store
 
 # images
-images/
-images/*
+
+
 images.zip
 *.h5

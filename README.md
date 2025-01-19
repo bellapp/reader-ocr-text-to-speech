@@ -1,5 +1,5 @@
 # MonReader: OCR and Text-to-Speech for Document Digitization
-![MonReader Application Screenshot](assets/MonREaderApp.png)
+![MonReader Application Screenshot](assets/MonReaderApp.png)
 MonReader is an innovative mobile document digitization solution designed for the blind, researchers, and anyone in need of fast, high-quality, and fully automated document scanning. This project leverages Artificial Intelligence, Computer Vision, and advanced deployment techniques to simplify the process of document scanning, text recognition, and text-to-speech conversion.
 
 ## Features
